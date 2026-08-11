@@ -24,7 +24,7 @@
 
         h1 {
             text-align: center;
-            color: #0066cc;
+            color: #333;
         }
 
         h2 {
@@ -55,7 +55,7 @@
 
     <p><strong>Trường:</strong> Trường Đại học Thủ đô Hà Nội</p>
 
-    <p><strong>Lớp:</strong> CNTT D2024AA</p>
+    <p><strong>Lớp:</strong> CNTT D2024A</p>
 
     <p><strong>Chuyên ngành:</strong> Công nghệ thông tin</p>
 
@@ -70,21 +70,21 @@
     <h2>Kỹ năng</h2>
 
     <ul>
-        <li>C/C++</li>
-        <li>Java</li>
-        <li>HTML/CSS</li>
-        <li>JavaScript</li>
-        <li>PHP</li>
-        <li>MySQL</li>
+        <p>C/C++</p>
+        <p>Java</p>
+        <p>HTML/CSS</p>
+        <p>JavaScript</p>
+        <p>PHP</p>
+        <p>MySQL</p>
     </ul>
 
     <h2>Các dự án đã thực hiện</h2>
 
     <ul>
-        <li>Website giới thiệu du lịch</li>
-        <li>Website giới thiệu bản thân</li>
-        <li>Dự án quản lý nhà xe bằng C++</li>
-        <li>Các bài tập lập trình Java và SQL</li>
+        <p>Website giới thiệu du lịch</p>
+        <p>Website giới thiệu bản thân</p>
+        <p>Dự án quản lý nhà xe bằng C++</p>
+        <p>Các bài tập lập trình Java và SQL</p>
     </ul>
 
     <h2>Mục tiêu</h2>
