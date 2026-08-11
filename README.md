@@ -5,7 +5,7 @@ Repository lưu trữ các bài thực hành học phần Lập trình Web B1.
 ## Thông tin sinh viên
 
 - Họ và tên: Triệu Văn Phấn
-- Lớp: CNTT D2024AA
+- Lớp: CNTT D2024A
 - Trường: Đại học Thủ đô Hà Nội
 - Chuyên ngành: Công nghệ thông tin
 
