@@ -1,4 +1,4 @@
-# Lập trình Web B1
+# Lập trình Web 
 
 Repository lưu trữ các bài thực hành học phần Lập trình Web B1.
 
