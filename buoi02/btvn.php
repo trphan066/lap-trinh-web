@@ -1,98 +1,432 @@
 <?php
 
-$devices = [];
+// Mảng lưu danh sách các yêu cầu booking
+$bookings = [];
 
-if (isset($_POST["them"])) {
 
-    $ten = $_POST["ten"];
-    $soLuong = $_POST["soLuong"];
-    $phong = $_POST["phong"];
-
-    $devices[] = [
-        "ten" => $ten,
-        "soLuong" => $soLuong,
-        "phong" => $phong
-    ];
-}
-
-// Hàm kiểm tra tình trạng
-function kiemTra($soLuong)
+// Hàm xác định trạng thái yêu cầu
+function xacDinhTrangThai($loaiYeuCau, $ngaySuDung)
 {
-    if ($soLuong > 0) {
-        return "Còn thiết bị";
-    } else {
-        return "Hết thiết bị";
+    $ngayHienTai = date("Y-m-d");
+
+    // Nếu ngày sử dụng đã qua
+    if ($ngaySuDung < $ngayHienTai) {
+        return "Không hợp lệ";
     }
+
+    // Nếu là đặt phòng hoặc mượn thiết bị
+    if ($loaiYeuCau == "Đặt phòng" || $loaiYeuCau == "Mượn thiết bị") {
+        return "Chờ duyệt";
+    }
+
+    return "Không xác định";
 }
+
+
+// Kiểm tra người dùng gửi form
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Nhận dữ liệu từ form
+    $nguoiYeuCau = $_POST["nguoiYeuCau"];
+    $loaiYeuCau = $_POST["loaiYeuCau"];
+    $phong = $_POST["phong"];
+    $ngaySuDung = $_POST["ngaySuDung"];
+    $gioBatDau = $_POST["gioBatDau"];
+    $gioKetThuc = $_POST["gioKetThuc"];
+    $mucDich = $_POST["mucDich"];
+
+
+    // Kiểm tra giờ
+    if ($gioBatDau >= $gioKetThuc) {
+        $trangThai = "Giờ không hợp lệ";
+    } else {
+
+        // Gọi hàm xác định trạng thái
+        $trangThai = xacDinhTrangThai(
+            $loaiYeuCau,
+            $ngaySuDung
+        );
+    }
+
+
+    // Tạo booking
+    $booking = [
+        "nguoiYeuCau" => $nguoiYeuCau,
+        "loaiYeuCau" => $loaiYeuCau,
+        "phong" => $phong,
+        "ngaySuDung" => $ngaySuDung,
+        "gioBatDau" => $gioBatDau,
+        "gioKetThuc" => $gioKetThuc,
+        "mucDich" => $mucDich,
+        "trangThai" => $trangThai
+    ];
+
+
+    // Thêm booking vào mảng
+    $bookings[] = $booking;
+}
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="vi">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Quản lý thiết bị</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Quản lý Booking</title>
+
+
+    <style>
+
+        body {
+    font-family: Arial;
+    margin: 30px;
+}
+
+form {
+    width: 500px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+button {
+    cursor: pointer;
+}
+
+    </style>
+
 </head>
+
 
 <body>
 
-<h2>QUẢN LÝ THIẾT BỊ PHÒNG THỰC HÀNH</h2>
+<div class="container">
 
-<form method="post">
 
-    Tên thiết bị:
-    <input type="text" name="ten">
+    <h1>
+        HỆ THỐNG QUẢN LÝ PHÒNG THỰC HÀNH VÀ THIẾT BỊ
+    </h1>
 
-    Số lượng:
-    <input type="number" name="soLuong" min="0">
 
-    Phòng:
-    <select name="phong">
-        <option value="Phòng 101">Phòng 101</option>
-        <option value="Phòng 102">Phòng 102</option>
-        <option value="Phòng 103">Phòng 103</option>
-    </select>
+    <p class="subtitle">
+        Quản lý yêu cầu đặt phòng và mượn thiết bị
+    </p>
 
-    <input type="submit" name="them" value="Thêm">
 
-</form>
+    <!-- FORM -->
 
-<br>
+    <h2>
+        Tạo yêu cầu đặt phòng / mượn thiết bị
+    </h2>
 
-<table border="1" cellpadding="8">
-    <tr>
-        <th>STT</th>
-        <th>Tên thiết bị</th>
-        <th>Số lượng</th>
-        <th>Phòng</th>
-        <th>Tình trạng</th>
-    </tr>
 
-<?php
+    <form method="POST">
 
-$stt = 1;
 
-foreach ($devices as $device) {
+        <!-- Người yêu cầu -->
 
-    echo "<tr>";
+        <label>
+            Người yêu cầu:
+        </label>
 
-    echo "<td>" . $stt . "</td>";
+        <input
+            type="text"
+            name="nguoiYeuCau"
+            placeholder="Nhập họ và tên"
+            required
+        >
 
-    echo "<td>" . htmlspecialchars($device["ten"]) . "</td>";
 
-    echo "<td>" . $device["soLuong"] . "</td>";
+        <!-- Loại yêu cầu -->
 
-    echo "<td>" . $device["phong"] . "</td>";
+        <label>
+            Loại yêu cầu:
+        </label>
 
-    echo "<td>" . kiemTra($device["soLuong"]) . "</td>";
+        <select name="loaiYeuCau" required>
 
-    echo "</tr>";
+            <option value="">
+                -- Chọn loại yêu cầu --
+            </option>
 
-    $stt++;
-}
+            <option value="Đặt phòng">
+                Đặt phòng
+            </option>
 
-?>
+            <option value="Mượn thiết bị">
+                Mượn thiết bị
+            </option>
 
-</table>
+        </select>
+
+
+        <!-- Chọn phòng -->
+
+        <label>
+            Chọn phòng:
+        </label>
+
+        <select name="phong" required>
+
+            <option value="">
+                -- Chọn phòng --
+            </option>
+
+            <option value="101">Phòng 101</option>
+            <option value="102">Phòng 102</option>
+            <option value="103">Phòng 103</option>
+            <option value="104">Phòng 104</option>
+
+            <option value="201">Phòng 201</option>
+            <option value="202">Phòng 202</option>
+            <option value="203">Phòng 203</option>
+            <option value="204">Phòng 204</option>
+
+        </select>
+
+
+        <!-- Ngày và giờ -->
+
+        <div class="row">
+
+            <div>
+
+                <label>
+                    Ngày sử dụng:
+                </label>
+
+                <input
+                    type="date"
+                    name="ngaySuDung"
+                    required
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Giờ bắt đầu:
+                </label>
+
+                <input
+                    type="time"
+                    name="gioBatDau"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <label>
+            Giờ kết thúc:
+        </label>
+
+        <input
+            type="time"
+            name="gioKetThuc"
+            required
+        >
+
+
+        <!-- Mục đích -->
+
+        <label>
+            Mục đích:
+        </label>
+
+        <textarea
+            name="mucDich"
+            placeholder="Nhập mục đích sử dụng phòng"
+            required
+        ></textarea>
+
+
+        <button type="submit">
+            Gửi yêu cầu
+        </button>
+
+    </form>
+
+
+    <!-- DANH SÁCH -->
+
+    <h2>
+        Danh sách yêu cầu booking
+    </h2>
+
+
+    <?php if (count($bookings) > 0): ?>
+
+
+        <table>
+
+            <tr>
+
+                <th>STT</th>
+
+                <th>Người yêu cầu</th>
+
+                <th>Loại yêu cầu</th>
+
+                <th>Phòng</th>
+
+                <th>Ngày</th>
+
+                <th>Thời gian</th>
+
+                <th>Mục đích</th>
+
+                <th>Trạng thái</th>
+
+            </tr>
+
+
+            <?php foreach ($bookings as $index => $booking): ?>
+
+
+                <tr>
+
+                    <td>
+                        <?php echo $index + 1; ?>
+                    </td>
+
+
+                    <td>
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["nguoiYeuCau"]
+                        );
+                        ?>
+                    </td>
+
+
+                    <td>
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["loaiYeuCau"]
+                        );
+                        ?>
+                    </td>
+
+
+                    <td>
+                        Phòng
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["phong"]
+                        );
+                        ?>
+                    </td>
+
+
+                    <td>
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["ngaySuDung"]
+                        );
+                        ?>
+                    </td>
+
+
+                    <td>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["gioBatDau"]
+                        );
+                        ?>
+
+                        -
+
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["gioKetThuc"]
+                        );
+                        ?>
+
+                    </td>
+
+
+                    <td>
+                        <?php
+                        echo htmlspecialchars(
+                            $booking["mucDich"]
+                        );
+                        ?>
+                    </td>
+
+
+                    <td>
+
+                        <?php if ($booking["trangThai"] == "Chờ duyệt"): ?>
+
+                            <span class="status waiting">
+                                Chờ duyệt
+                            </span>
+
+                        <?php else: ?>
+
+                            <span class="status invalid">
+
+                                <?php
+                                echo htmlspecialchars(
+                                    $booking["trangThai"]
+                                );
+                                ?>
+
+                            </span>
+
+                        <?php endif; ?>
+
+                    </td>
+
+                </tr>
+
+
+            <?php endforeach; ?>
+
+
+        </table>
+
+
+    <?php else: ?>
+
+
+        <p class="empty">
+            Chưa có yêu cầu booking nào.
+        </p>
+
+
+    <?php endif; ?>
+
+
+</div>
 
 </body>
+
 </html>
